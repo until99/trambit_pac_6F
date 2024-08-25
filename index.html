@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <!-- Imports -->
+    <!-- Libs -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
+
+    <!-- Files -->
+    <link rel="stylesheet" href="style.css">
+    <script defer src="main.js"></script>
+
+    <title>PAC 6F</title>
+</head>
+
+<body>
+    <div class="Container">
+        <section class="KPIsSection">
+            <div class="TemperatureCard">
+                <div class="IconTemperatureContainer">
+                    <i class="ph-fill ph-sun"></i>
+                </div>
+                <div class="TemperatureCardContent">
+                    <label for="TemperatureValue">Temperature</label>
+                    <p name="TemperatureValue">26°C</p>
+                </div>
+            </div>
+            <div class="HumidityCard">
+                <div class="IconHumidityContainer">
+                    <i class="ph-fill ph-drop"></i>
+                </div>
+                <div class="HumidityCardContent">
+                    <label for="HumidityValue">Humidity</label>
+                    <p name="HumidityValue">84%</p>
+                </div>
+            </div>
+            <div class="ActionButtons">
+                <input type="date" name="DateInput" id="ActionButtonsDateInput">
+                <div class="InputGroup">
+                    <input type="number" placeholder="Seconds" min="0" max="120">
+                    <button>Irrigate</button>
+                </div>
+                <div class="InputGroup">
+                    <label for="LightState">Ligar/Desligar Luz</label>
+                    <input type="checkbox" name="LightState" id="LigthOnOff">
+                </div>
+            </div>
+        </section>
+        <section class="TemperatureSection">
+            <canvas id="TemperatureChartSection"></canvas>
+        </section>
+        <section class="MetricsSection">
+            <canvas id="MetricsChartSection"></canvas>
+        </section>
+    </div>
+    <section class="SideBarLogs">
+        <div class="SideBarLogsTopBar">
+            <p>LOGS</p>
+        </div>
+        <div class="SideBarLogsContent">
+            <textarea name="SideBarLogsContent" id="SideBarLogsContent"></textarea>
+        </div>
+    </section>
+</body>
+
+</html>

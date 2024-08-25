@@ -1,0 +1,145 @@
+@import url('https://fonts.googleapis.com/css2?family=Inconsolata:wght@200..900&display=swap');
+
+* {
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    overflow: hidden;
+
+    display: grid;
+    grid-template-columns: 70vw 30vw;
+
+    font-family: "Inconsolata", monospace;
+}
+
+.SideBarLogs {
+    height: 100%;
+}
+
+.SideBarLogs .SideBarLogsContent {
+
+}
+
+.SideBarLogs .SideBarLogsTopBar {
+    display: flex;
+    align-items: center;
+    
+    height: 4rem;
+
+    background-color: rgb(201, 201, 201);
+}
+
+.SideBarLogs .SideBarLogsTopBar p {
+    padding: 1rem;
+    font-weight: 700;
+}
+
+.SideBarLogs #SideBarLogsContent {
+    height: 100%;
+    width: 100%;
+}
+
+.Container {
+    height: 100dvh;
+
+    display: grid;
+    grid-template-rows: 20% 40% 40%;
+}
+
+.KPIsSection {
+    display: grid;
+    grid-template-columns: 33% 33% 33%;
+}
+
+.KPIsSection .TemperatureCard {
+    margin: 1rem;
+    padding-left: 2rem;
+
+    border-radius: 8px;
+
+    display: flex;
+    align-items: center;
+    gap: 2rem;
+
+    background-color: rgb(253, 255, 200);
+}
+
+.KPIsSection .TemperatureCard .IconTemperatureContainer {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    padding: 1.5rem;
+    border-radius: 6px;
+
+    font-size: 5rem;
+    color: rgb(255, 222, 88);
+
+    border-width: 2px solid rgb(255, 222, 88);
+}
+
+.KPIsSection .TemperatureCard .TemperatureCardContent {
+    display: flex;
+    flex-direction: column;
+}
+
+.KPIsSection .TemperatureCard .TemperatureCardContent p {
+    font-weight: 600;
+    font-size: 4rem;
+}
+
+.KPIsSection .HumidityCard {
+    margin: 1rem;
+    padding-left: 2rem;
+
+    border-radius: 8px;
+
+    display: flex;
+    align-items: center;
+    gap: 2rem;
+
+    background-color: rgb(227, 230, 245);
+}
+
+.KPIsSection .HumidityCard .IconHumidityContainer {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    padding: 1.5rem;
+    border-radius: 6px;
+
+    font-size: 4rem;
+    color: rgb(88, 119, 255);
+}
+
+.KPIsSection .HumidityCard .HumidityCardContent {
+    display: flex;
+    flex-direction: column;
+}
+
+.KPIsSection .HumidityCard .HumidityCardContent p {
+    font-weight: 600;
+    font-size: 4rem;
+}
+
+.KPIsSection .ActionButtons{
+    margin: 1rem;
+
+    display: grid;
+    grid-template-columns: 50% 50%;
+
+    gap: 1rem;
+}
+
+.KPIsSection .ActionButtons .InputGroup{
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+.TemperatureSection #TemperatureChartSection {
+    width: 100%;
+}
