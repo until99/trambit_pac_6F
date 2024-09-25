@@ -8,6 +8,9 @@ TinkerCad: [https://www.tinkercad.com/things/ltg99EXgnB3-trambit?sharecode=JV9eK
 
 Vídeo de demonstração: https://catolicasc-my.sharepoint.com/:v:/g/personal/gabriel_kasten_catolicasc_edu_br/EboaT4tRms5Cg_v4GQi41Y4BPhxGKaEtNcHoCknhKLDwPw?e=E81PWx
 
+![Projeto estufa](https://github.com/user-attachments/assets/cceb9966-d2e4-41e3-870e-f78f61ff3769)
+
+
 Visão Geral do projeto:
 
 O projeto "Estufa IoT" consiste em uma aplicação de Internet das Coisas (IoT) integrada com Inteligência Artificial (IA) para otimizar o ambiente de uma estufa agrícola. O objetivo principal é monitorar e ajustar as condições ambientais, como umidade, temperatura e qualidade do ar, usando uma variedade de sensores e algoritmos de IA. Isso permite uma gestão mais eficiente do microclima dentro da estufa, essencial para a saúde e crescimento ótimo das plantas. A solução proposta visa não apenas melhorar a qualidade dos cultivos, mas também reduzir o desperdício de recursos e aumentar a eficiência da produção agrícola.
