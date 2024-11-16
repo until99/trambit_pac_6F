@@ -15,22 +15,34 @@ def health_check():
 
 @app.route("/sensors", methods=["POST"])
 def receive_sensors_data():
-    """Recebe os dados de todos os sensores e envia para a URL configurada."""
+    """Recebe os dados de todos os sensores, transforma no formato esperado e envia para a URL configurada."""
+    # Obtém os dados do corpo da requisição
     data = request.get_json()
 
+    # Validação dos dados recebidos
     if not data:
         return jsonify({"error": "Nenhum dado recebido"}), 400
 
     print("Dados recebidos:", data)
 
-    response = requests.post(url, json=data)
-
-    if response.status_code == 200:
-        print("Dados enviados com sucesso")
-    else:
-        print(
-            f"Erro ao enviar dados para a nova rota: {response.status_code} - {response.text}"
+    # Transforma os dados no formato esperado
+    formatted_data = []
+    for sensor_name, sensor_value in data.items():
+        formatted_data.append(
+            {"ds_sensor": sensor_name, "nr_sensor_value": sensor_value}
         )
+
+    print("Dados formatados para envio:", formatted_data)
+
+    # Envio de cada sensor individualmente para a URL configurada
+    for entry in formatted_data:
+        response = requests.post(url, json=entry)
+        if response.status_code == 200:
+            print(f"Dados enviados com sucesso para o sensor {entry['ds_sensor']}!")
+        else:
+            print(
+                f"Erro ao enviar dados do sensor {entry['ds_sensor']}: {response.status_code} - {response.text}"
+            )
 
     return jsonify({"message": "Dados recebidos e enviados"}), 200
 
