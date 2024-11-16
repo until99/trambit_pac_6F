@@ -3,36 +3,36 @@ import requests
 
 app = Flask(__name__)
 
-# Configurações da nova rota
+# Configurações da URL de destino
 url = "https://hell.pockethost.io/api/collections/trambit_pac_6F/records"
 
 
-@app.route("/", methods=["GET"])
-def index():
+@app.route("/health", methods=["GET"])
+def health_check():
+    """Verifica a saúde do servidor."""
     return jsonify({"message": "OK"}), 200
 
 
-@app.route("/ldr", methods=["POST"])
-def receive_data():
+@app.route("/sensors", methods=["POST"])
+def receive_sensors_data():
+    """Recebe os dados de todos os sensores e envia para a URL configurada."""
     data = request.get_json()
 
-    ds_sensor = data.get("ds_sensor")
-    nr_sensor_value = data.get("nr_sensor_value")
+    if not data:
+        return jsonify({"error": "Nenhum dado recebido"}), 400
 
-    print(f"Dados recebidos - Sensor: {ds_sensor}, Valor: {nr_sensor_value}")
+    print("Dados recebidos:", data)
 
-    sensor_data = {"ds_sensor": ds_sensor, "nr_sensor_value": nr_sensor_value}
-
-    response = requests.post(url, json=sensor_data)
+    response = requests.post(url, json=data)
 
     if response.status_code == 200:
-        print("Dados enviados com sucesso para a nova rota!")
+        print("Dados enviados com sucesso")
     else:
         print(
             f"Erro ao enviar dados para a nova rota: {response.status_code} - {response.text}"
         )
 
-    return jsonify({"message": "Dados recebidos"}), 200
+    return jsonify({"message": "Dados recebidos e enviados"}), 200
 
 
 if __name__ == "__main__":
