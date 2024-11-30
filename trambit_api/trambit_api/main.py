@@ -57,7 +57,7 @@ def return_sensor_data():
     if not data:
         return jsonify({"error": "Nenhum dado encontrado"}), 400
 
-    jsonify(data), 400
+    return data, 400
 
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=5000)
