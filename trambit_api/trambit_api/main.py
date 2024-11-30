@@ -46,6 +46,15 @@ def receive_sensors_data():
 
     return jsonify({"message": "Dados recebidos e enviados"}), 200
 
+@app.route("list-data", method=["GET"])
+def return_sensor_data():
+    """Retorna os dados de todos os sensores"""
+    data = requests.get("https://hell.pockethost.io/api/collections/trambit_pac_6F/records")
+
+    if not data:
+        return jsonify({"error": "Nenhum dado encontrado"}), 400
+
+    jsonify(data), 400
 
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=5000)
