@@ -1,7 +1,9 @@
 from flask import Flask, jsonify, request
 import requests
+from flask_cors import CORS
 
 app = Flask(__name__)
+CORS(app)  # Habilita CORS para todas as rotas
 
 # Configurações da URL de destino
 url = "https://hell.pockethost.io/api/collections/trambit_pac_6F/records"
@@ -46,6 +48,7 @@ def receive_sensors_data():
 
     return jsonify({"message": "Dados recebidos e enviados"}), 200
 
+
 @app.route("/list-data", methods=["GET"])
 def return_sensor_data():
     """Retorna os dados de todos os sensores"""
@@ -57,7 +60,8 @@ def return_sensor_data():
     if not data:
         return jsonify({"error": "Nenhum dado encontrado"}), 400
 
-    return data, 400
+    return data, 200
+
 
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=5000)

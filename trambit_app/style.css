@@ -26,6 +26,10 @@ header > div {
     padding: 4rem 8rem;
 }
 
+.get-sensors-data-hook {
+    font-weight: 700;
+}
+
 .sensor-name {
     font-size: large;
     font-weight: 700;
