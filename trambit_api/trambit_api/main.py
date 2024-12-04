@@ -51,16 +51,40 @@ def receive_sensors_data():
 @app.route("/list-data", methods=["GET"])
 def return_sensor_data():
     """Retorna os dados de todos os sensores"""
-    response = requests.get("https://hell.pockethost.io/api/collections/trambit_pac_6F/records?perPage=1000000")
+    url = "https://hell.pockethost.io/api/collections/trambit_pac_6F/records"
+    per_page = 500
+    page = 1
+    all_data = []
 
-    if response.status_code == 200:
+    while True:
+        response = requests.get(url, params={"perPage": per_page, "page": page})
+
+        if response.status_code != 200:
+            return jsonify({"error": "Erro ao buscar dados"}), 500
+
         data = response.json()
 
-    if not data:
+        if not data.get('records'):
+            break
+
+        all_data.extend(data['records'])
+
+        # Se a página atual for a última, pare
+        if page >= data.get('totalPages', 1):
+            break
+
+        page += 1
+
+    if not all_data:
         return jsonify({"error": "Nenhum dado encontrado"}), 400
 
-    return data, 200
-
+    return jsonify({
+        "data": all_data,
+        "totalItems": data.get('totalItems'),
+        "totalPages": data.get('totalPages'),
+        "perPage": data.get('perPage'),
+        "page": data.get('page')
+    }), 200
 
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=5000)
