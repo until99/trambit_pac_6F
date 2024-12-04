@@ -34,3 +34,11 @@ header > div {
     font-size: large;
     font-weight: 700;
 }
+
+section {
+    padding: 4rem 3.25rem;
+}
+
+section hr {
+    margin: 2rem 0;
+}

@@ -48,11 +48,10 @@ def receive_sensors_data():
 
     return jsonify({"message": "Dados recebidos e enviados"}), 200
 
-
 @app.route("/list-data", methods=["GET"])
 def return_sensor_data():
     """Retorna os dados de todos os sensores"""
-    response = requests.get("https://hell.pockethost.io/api/collections/trambit_pac_6F/records")
+    response = requests.get("https://hell.pockethost.io/api/collections/trambit_pac_6F/records?perPage=1000000")
 
     if response.status_code == 200:
         data = response.json()

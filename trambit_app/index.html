@@ -10,7 +10,9 @@
 
     <!-- Files -->
     <link rel="stylesheet" href="style.css">
-    <script defer src="main.js"></script>
+    
+    <script defer src="/trambit_app/js/main.js"></script>
+    <script defer src="/trambit_app/js/chart_handler.js"></script>
 
     <title>Trambit</title>
 </head>
@@ -38,16 +40,20 @@
 
     <section>
         <div class="ldr-sensor-chart">
-            <canvas id="ldr-sensor-chart"></canvas>
+            <canvas width="100%" height="30rem" class="chart" id="ldr-sensor-chart"></canvas>
         </div>
+
+        <!-- <hr>
 
         <div class="dthm-sensor-chart">
-            <canvas id="dthm-sensor-chart"></canvas>
+            <canvas width="100%" height="30rem" class="chart" id="dthm-sensor-chart"></canvas>
         </div>
 
+        <hr>
+
         <div class="qm9-sensor-chart">
-            <canvas id="qm9-sensor-chart"></canvas>
-        </div>
+            <canvas width="100%" height="30rem" class="chart" id="qm9-sensor-chart"></canvas>
+        </div> -->
     </section>
 </body>
 
