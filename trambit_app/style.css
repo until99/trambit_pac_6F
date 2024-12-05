@@ -21,13 +21,20 @@ header > div {
     align-items: center;
 
     gap: 1rem;
-    background-color: azure;
+    background-color: #dbf2f2;
+    border: 3px solid #4bc0c0;
+    border-radius: 8px;
 
     padding: 4rem 8rem;
 }
 
 .get-sensors-data-hook {
     font-weight: 700;
+    cursor: pointer;
+}
+
+.get-sensors-data-hook:hover {
+    background-color: #a7d6d6;
 }
 
 .sensor-name {
@@ -40,5 +47,6 @@ section {
 }
 
 section hr {
+    border: 1px solid #4bc0c0;
     margin: 2rem 0;
 }

@@ -1,12 +1,18 @@
+import httpx
+import pandas as pd
+from sklearn.linear_model import LinearRegression
+from datetime import datetime
 from flask import Flask, jsonify, request
-import requests
 from flask_cors import CORS
+import requests
 
 app = Flask(__name__)
 CORS(app)  # Habilita CORS para todas as rotas
 
-# Configurações da URL de destino
-url = "https://hell.pockethost.io/api/collections/trambit_pac_6F/records"
+# URL da API para obter dados
+url = "https://hell.pockethost.io/api/collections/trambit_pac_6F/records?perPage=500"
+# URL de destino para enviar previsões
+ai_url = "https://hell.pockethost.io/api/collections/trambit_pac_6F_AI/records"
 
 
 @app.route("/health", methods=["GET"])
@@ -48,41 +54,84 @@ def receive_sensors_data():
 
     return jsonify({"message": "Dados recebidos e enviados"}), 200
 
+
 @app.route("/list-data", methods=["GET"])
-def return_sensor_data():
-    """Retorna os dados de todos os sensores"""
-    url = "https://hell.pockethost.io/api/collections/trambit_pac_6F/records?perPage=500&sort=-created"
-    all_data = []
+async def return_sensor_data():
+    """Retorna os dados de todos os sensores e faz previsão para o próximo dia, enviando as previsões para a URL de AI, página por página."""
+    page = 1
+    totalPages = 1
 
-    while True:
-        response = requests.get(url)
+    async with httpx.AsyncClient() as client:
+        while page <= totalPages:
+            # Faz a requisição GET para a página atual
+            response = await client.get(url, params={'page': page})
+            print(f"Requisição para página {page}: Status {response.status_code}")
 
-        if response.status_code != 200:
-            return jsonify({"error": "Erro ao buscar dados"}), 500
+            if response.status_code != 200:
+                print("Erro na requisição:", response.text)
+                return jsonify({"error": "Erro ao buscar dados"}), 500
 
-        data = response.json()
+            try:
+                data = response.json()
+            except ValueError:
+                print("Erro ao parsear a resposta JSON:", response.text)
+                return jsonify({"error": "Erro ao parsear a resposta da API"}), 500
 
-        if not data.get('records'):
-            break
+            # Organiza os dados da página para a previsão
+            if 'items' in data:
+                page_data = data['items']
+                sensor_data = {}
 
-        all_data.extend(data['records'])
+                # Organiza os dados por sensor
+                for record in page_data:
+                    sensor_id = record.get("ds_sensor")
+                    sensor_value = record.get("nr_sensor_value")
+                    timestamp = record.get("created")
 
-        # Se a página atual for a última, pare
-        if page >= data.get('totalPages', 1):
-            break
+                    if sensor_id and sensor_value and timestamp:
+                        timestamp = datetime.fromisoformat(timestamp.rstrip("Z"))
 
-        page += 1
+                        if sensor_id not in sensor_data:
+                            sensor_data[sensor_id] = []
 
-    if not all_data:
-        return jsonify({"error": "Nenhum dado encontrado"}), 400
+                        sensor_data[sensor_id].append((timestamp, sensor_value))
 
-    return jsonify({
-        "data": all_data,
-        "totalItems": data.get('totalItems'),
-        "totalPages": data.get('totalPages'),
-        "perPage": data.get('perPage'),
-        "page": data.get('page')
-    }), 200
+                # Faz a previsão para cada sensor e envia para o AI
+                for sensor_id, records in sensor_data.items():
+                    df = pd.DataFrame(records, columns=["timestamp", "value"])
+                    df["timestamp"] = pd.to_datetime(df["timestamp"])
+                    df["timestamp"] = df["timestamp"].apply(lambda x: (x - df["timestamp"].min()).days)
+
+                    X = df["timestamp"].values.reshape(-1, 1)
+                    y = df["value"].values
+
+                    # Ajusta o modelo de regressão linear
+                    model = LinearRegression()
+                    model.fit(X, y)
+
+                    # Faz a previsão para o próximo dia
+                    next_day = (df["timestamp"].max() + 1).reshape(-1, 1)
+                    predicted_value = model.predict(next_day)
+
+                    # Prepara os dados da previsão para o envio
+                    prediction_data = {
+                        "ds_sensor": sensor_id,
+                        "nr_sensor_value": predicted_value[0]
+                    }
+
+                    # Envia a previsão para o AI
+                    ai_response = requests.post(ai_url, json=prediction_data)
+                    if ai_response.status_code == 200:
+                        print(f"Previsão enviada com sucesso para o sensor {sensor_id}!")
+                    else:
+                        print(f"Erro ao enviar previsão para o sensor {sensor_id}: {ai_response.status_code} - {ai_response.text}")
+
+            # Atualiza o número total de páginas
+            totalPages = data.get('totalPages', 1)
+            page += 1
+
+    return jsonify({"message": "Processamento de dados concluído."}), 200
+
 
 if __name__ == "__main__":
-    app.run(host="0.0.0.0", port=5000)
+    app.run(host="0.0.0.0", port=5000, debug=True)

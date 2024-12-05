@@ -29,11 +29,8 @@ async function get_sensors_data() {
             }
 
             totalPages = data.totalPages;
-
-            // Atualiza os gráficos com os dados da página atual
             populate_globals_with_sensor_data({ items: data.items });
 
-            console.log(`Página ${page} processada com sucesso.`);
             page++;
         } while (page <= totalPages);
 
@@ -44,7 +41,6 @@ async function get_sensors_data() {
 }
 
 function populate_globals_with_sensor_data(data) {
-    console.log("Populando globais com dados");
 
     if (!data || !data.items || !Array.isArray(data.items)) {
         console.error("Invalid data format received.");
@@ -53,18 +49,42 @@ function populate_globals_with_sensor_data(data) {
 
     const sensor_data = data.items;
 
-    // Filtra e processa os dados do sensor LDR
-    console.log("LDR filtrado");
+    // ---------------------------------------------------------
+    // LDR
     ldr_sensor_data = sensor_data.filter((i) => i['ds_sensor'] === 'ldr');
 
-    const processed_data = process_sensor_data_for_chart(ldr_sensor_data);
+    const ldr_processed_data = process_sensor_data_for_chart(ldr_sensor_data);
 
-    if (processed_data.length > 0) {
-        console.log("Dados processados, atualizando gráfico");
-        load_ldr_chart_with(processed_data);
+    if (ldr_processed_data.length > 0) {
+        load_ldr_chart_with(ldr_processed_data);
     } else {
         console.warn("No processed data available for chart rendering.");
     }
+
+    // ---------------------------------------------------------
+    // DTHM
+    dthm_sensor_data = sensor_data.filter((i) => i['ds_sensor'] === 'dthm');
+
+    const dthm_processed_data = process_sensor_data_for_chart(dthm_sensor_data);
+
+    if (dthm_processed_data.length > 0) {
+        load_dthm_chart_with(dthm_processed_data);
+    } else {
+        console.warn("No processed data available for chart rendering.");
+    } 
+
+    // ---------------------------------------------------------
+    // QM9
+    qm9_sensor_data = sensor_data.filter((i) => i['ds_sensor'] === 'qm9_analog');
+
+    const qm9_processed_data = process_sensor_data_for_chart(qm9_sensor_data);
+
+    if (qm9_processed_data.length > 0) {
+        load_qm9_chart_with(qm9_processed_data);
+    } else {
+        console.warn("No processed data available for chart rendering.");
+    }
+
 }
 
 function process_sensor_data_for_chart(data) {
