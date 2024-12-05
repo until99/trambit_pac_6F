@@ -4,37 +4,63 @@ var qm_nine_sensor_data = [];
 
 async function get_sensors_data() {
     try {
-        const response = await fetch("https://trambit-pac-6f.onrender.com/list-data");
-        if (!response.ok) {
-            throw new Error(`HTTP error! Status: ${response.status}`);
-        }
+        let page = 1;
+        let totalPages;
 
-        const data = await response.json();
-        populate_globals_with_sensor_data(data);
-        console.log(data);
+        do {
+            const response = await fetch(
+                `https://hell.pockethost.io/api/collections/trambit_pac_6F/records?perPage=500&page=${page}&sort=-created`
+            );
+
+            if (!response.ok) {
+                throw new Error(`HTTP error! Status: ${response.status}`);
+            }
+
+            const data = await response.json();
+
+            if (!Array.isArray(data.items)) {
+                console.error("Erro: 'items' não é um array.");
+                break;
+            }
+
+            if (typeof data.totalPages !== 'number') {
+                console.error("Erro: 'totalPages' não é um número.");
+                break;
+            }
+
+            totalPages = data.totalPages;
+
+            // Atualiza os gráficos com os dados da página atual
+            populate_globals_with_sensor_data({ items: data.items });
+
+            console.log(`Página ${page} processada com sucesso.`);
+            page++;
+        } while (page <= totalPages);
+
+        console.log("Todos os dados foram carregados.");
     } catch (error) {
         console.error("Failed to retrieve sensor data: ", error);
     }
 }
 
 function populate_globals_with_sensor_data(data) {
+    console.log("Populando globais com dados");
+
     if (!data || !data.items || !Array.isArray(data.items)) {
         console.error("Invalid data format received.");
         return;
     }
 
-    let sensor_data = data.items;
+    const sensor_data = data.items;
 
-    // Filtra dados do sensor LDR
+    // Filtra e processa os dados do sensor LDR
+    console.log("LDR filtrado");
     ldr_sensor_data = sensor_data.filter((i) => i['ds_sensor'] === 'ldr');
 
-    // Processa os dados do LDR
     const processed_data = process_sensor_data_for_chart(ldr_sensor_data);
 
-    console.log("Processed data: ", processed_data);
-
     if (processed_data.length > 0) {
-        // Renderiza o gráfico com os dados processados
+        console.log("Dados processados, atualizando gráfico");
         load_ldr_chart_with(processed_data);
     } else {
         console.warn("No processed data available for chart rendering.");
@@ -48,15 +74,13 @@ function process_sensor_data_for_chart(data) {
     }
 
     const grouped_date = data.reduce((acc, row) => {
-        // Extrai a parte da data no formato YYYY-MM-DD (antes da hora)
-        const rawDate = row.created?.split(' ')[0]; // Exemplo: "2024-11-16"
+        const rawDate = row.created?.split(' ')[0];
 
         if (!rawDate) {
             console.warn(`Invalid date format: ${row.created}`);
             return acc;
         }
 
-        // Divide a data no formato YYYY-MM-DD
         const [year, month, day] = rawDate.split('-');
 
         if (!day || !month || !year) {
@@ -64,10 +88,9 @@ function process_sensor_data_for_chart(data) {
             return acc;
         }
 
-        // Formata a data como DD/MM/YYYY
         const formattedDate = `${day}/${month}/${year}`;
 
-        const numericValue = Number(row.nr_sensor_value); // Converte para número
+        const numericValue = Number(row.nr_sensor_value);
 
         if (!isNaN(numericValue)) {
             if (!acc[formattedDate]) {
@@ -81,29 +104,11 @@ function process_sensor_data_for_chart(data) {
         return acc;
     }, {});
 
-    console.log("Grouped date: ", grouped_date);
-
-    // Calcula a média para cada data
     return Object.keys(grouped_date).map(date => {
         const values = grouped_date[date];
         const average = calculateAverageFromArray(values);
         return { date, average };
     });
-}
-
-function calculateAverage(sensorType, data) {
-    if (!data || !data.items || !Array.isArray(data.items)) {
-        console.warn("Invalid data format for average calculation.");
-        return NaN;
-    }
-
-    // Filtra os itens pelo tipo de sensor
-    const sensorValues = data.items
-        .filter(item => item.ds_sensor === sensorType)
-        .map(item => Number(item.nr_sensor_value))
-        .filter(value => !isNaN(value)); // Garante que sejam números válidos
-
-    return calculateAverageFromArray(sensorValues);
 }
 
 function calculateAverageFromArray(values) {
@@ -115,3 +120,5 @@ function calculateAverageFromArray(values) {
     const sum = values.reduce((acc, curr) => acc + curr, 0);
     return sum / values.length;
 }
+
+get_sensors_data();
